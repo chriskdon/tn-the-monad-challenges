@@ -19,12 +19,12 @@ fiveRands' seed =
       e = rand $ snd d
   in [fst a, fst b, fst c, fst d, fst e]
 
-randString3 :: String
+randString3 :: (String, Seed)
 randString3 = 
     let a = randLetter $ mkSeed 1
         b = randLetter $ snd a
         c = randLetter $ snd b
-    in [fst a, fst b, fst c]
+    in ([fst a, fst b, fst c], snd c)
 
 randMap :: (a -> b) -> Gen a -> Gen b
 randMap f rvg seed = 
@@ -68,3 +68,9 @@ generalPair fa fb seed =
 
 generalPair2 :: Gen a -> Gen b -> Gen (a, b)
 generalPair2 = generalB (,)
+
+repRandom :: [Gen a] -> Gen [a]
+repRandom gfs seed = foldr apply root gfs
+  where root  = ([], seed)
+        apply = \fg (ls, s) -> let (v, ns) = fg s 
+                               in (ls ++ [v], ns) -- Improve (don't use (++) ?)
