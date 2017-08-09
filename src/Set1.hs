@@ -74,3 +74,12 @@ repRandom gfs seed = foldr apply root gfs
   where root  = ([], seed)
         apply = \fg (ls, s) -> let (v, ns) = fg s 
                                in (ls ++ [v], ns) -- Improve (don't use (++) ?)
+
+genTwo :: Gen a -> (a -> Gen b) -> Gen b
+genTwo fg fm seed =
+    let (av, as) = fg seed
+        (bv, bs) = fm av as
+    in (bv, bs)
+
+mkGen :: a -> Gen a
+mkGen v seed = (v, seed)
