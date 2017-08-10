@@ -51,3 +51,10 @@ queryGreek gd key =
               Just max -> case headMay xs of
                   Nothing -> Nothing
                   Just head -> divMay (fromIntegral max) (fromIntegral head)
+
+chain :: (a -> Maybe b) -> Maybe a -> Maybe b
+chain f Nothing = Nothing
+chain f (Just v)  = f v
+
+link :: Maybe a -> (a -> Maybe b) -> Maybe b
+link = flip chain
