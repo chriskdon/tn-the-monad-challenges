@@ -61,8 +61,8 @@ queryGreek gd key =
 
 queryGreek2 :: GreekData -> String -> Maybe Double
 queryGreek2 gd key =
-  link (lookupMay key gd) 
-    (\ls    -> link (tailMay ls)
-    (\tail  -> link (maximumMay tail)
-    (\max   -> link (headMay ls)
-    (\head  -> divMay (fromIntegral max) (fromIntegral head)))))
+  link (lookupMay key gd)               $ 
+    \ls    -> link (tailMay ls)         $
+    \tail  -> link (maximumMay tail)    $
+    \max   -> link (headMay ls)         $
+    \head  -> divMay (fromIntegral max) (fromIntegral head)
