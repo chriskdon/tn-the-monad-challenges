@@ -38,3 +38,16 @@ minimumMay :: Ord a => [a] -> Maybe a
 minimumMay [] = Nothing
 minimumMay [x] = Just x
 minimumMay (x:xs) = Just $ foldl (\a b -> if a < b then a else b) x xs 
+
+-- Ugly --> will be converted to use monads later
+queryGreek :: GreekData -> String -> Maybe Double
+queryGreek gd key = 
+  case lookupMay key gd of
+      Nothing -> Nothing
+      Just xs -> case tailMay xs of
+          Nothing -> Nothing
+          Just tail -> case maximumMay tail of
+              Nothing -> Nothing
+              Just max -> case headMay xs of
+                  Nothing -> Nothing
+                  Just head -> divMay (fromIntegral max) (fromIntegral head)
