@@ -39,6 +39,13 @@ minimumMay [] = Nothing
 minimumMay [x] = Just x
 minimumMay (x:xs) = Just $ foldl (\a b -> if a < b then a else b) x xs 
 
+chain :: (a -> Maybe b) -> Maybe a -> Maybe b
+chain f Nothing = Nothing
+chain f (Just v)  = f v
+
+link :: Maybe a -> (a -> Maybe b) -> Maybe b
+link = flip chain
+
 -- Ugly --> will be converted to use monads later
 queryGreek :: GreekData -> String -> Maybe Double
 queryGreek gd key = 
@@ -52,9 +59,10 @@ queryGreek gd key =
                   Nothing -> Nothing
                   Just head -> divMay (fromIntegral max) (fromIntegral head)
 
-chain :: (a -> Maybe b) -> Maybe a -> Maybe b
-chain f Nothing = Nothing
-chain f (Just v)  = f v
-
-link :: Maybe a -> (a -> Maybe b) -> Maybe b
-link = flip chain
+queryGreek2 :: GreekData -> String -> Maybe Double
+queryGreek2 gd key =
+  link (lookupMay key gd) 
+    (\ls    -> link (tailMay ls)
+    (\tail  -> link (maximumMay tail)
+    (\max   -> link (headMay ls)
+    (\head  -> divMay (fromIntegral max) (fromIntegral head)))))
