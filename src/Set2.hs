@@ -46,7 +46,7 @@ chain f (Just v)  = f v
 link :: Maybe a -> (a -> Maybe b) -> Maybe b
 link = flip chain
 
--- Ugly --> will be converted to use monads later
+-- Ugly
 queryGreek :: GreekData -> String -> Maybe Double
 queryGreek gd key = 
   case lookupMay key gd of
@@ -59,6 +59,7 @@ queryGreek gd key =
                   Nothing -> Nothing
                   Just head -> divMay (fromIntegral max) (fromIntegral head)
 
+-- Pretty much bind with no "do" syntax sugar
 queryGreek2 :: GreekData -> String -> Maybe Double
 queryGreek2 gd key =
   link (lookupMay key gd)               $ 
@@ -66,3 +67,17 @@ queryGreek2 gd key =
     \tail  -> link (maximumMay tail)    $
     \max   -> link (headMay ls)         $
     \head  -> divMay (fromIntegral max) (fromIntegral head)
+
+yLink :: Maybe a -> Maybe b -> (a -> b -> Maybe c) -> Maybe c
+yLink a b f = link a (\a -> link b (f a))
+
+{-
+Another option, but tutorial said to use link
+
+yLink Nothing _ _ = Nothing
+yLink _ Nothing _ = Nothing
+yLink (Just a) (Just b) f = f a b
+-}
+
+--addSalaries :: [(String, Integer)] -> String -> String -> Maybe Integer
+--addSalaries salaries personA personB = 
